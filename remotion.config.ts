@@ -9,3 +9,7 @@ import { enableTailwind } from '@remotion/tailwind-v4';
 Config.setVideoImageFormat("jpeg");
 Config.setOverwriteOutput(true);
 Config.overrideWebpackConfig(enableTailwind);
+
+// Lambda rendering settings
+Config.setChromiumOpenGlRenderer("angle");
+Config.setConcurrency(4);

@@ -1,4 +1,10 @@
 node_modules
+lambda/node_modules
+lambda/package-lock.json
+lambda/CheckProgress/node_modules
+lambda/CheckProgress/package-lock.json
+lambda/RenderVideo/node_modules
+lambda/RenderVideo/package-lock.json
 dist
 .DS_Store
 .env

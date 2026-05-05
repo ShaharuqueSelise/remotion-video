@@ -1,0 +1,7 @@
+{
+    "name": "check-progress-lambda",
+    "version": "1.0.0",
+    "dependencies": {
+        "@remotion/lambda": "4.0.444"
+    }
+}
