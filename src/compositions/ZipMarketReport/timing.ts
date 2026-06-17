@@ -1,38 +1,64 @@
 export const ZIP_REPORT_FPS = 30;
 
-// 2.5 min sweet spot — fits under Lambda limit comfortably
-export const ZIP_MARKET_MIN_DURATION_SECONDS = 150; // 2.5 minutes
+export const LONG_FORM_SEGMENT_SECONDS = {
+  sonicHook: 8,
+  selfieIntro: 12,
+  medianSalesPrice: 20,
+  medianPricePerSqft: 25,
+  dollarBuys: 25,
+  activeListings: 20,
+  daysOnMarket: 20,
+  notableSales: 30,
+  localMoment: 20,
+  priceReductions: 20,
+  listVsSold: 20,
+  cta: 15,
+} as const;
 
-const INTRO_FRAMES  = 90;  // 3 sec
-const STATS_FRAMES  = 120; // 4 sec
-const OUTRO_FRAMES  = 90;  // 3 sec
+export const SHORTS_DURATION_SECONDS = 45;
 
-const SLIDE_BASE_FRAMES = 60; // 2 sec per slide minimum
+const toFrames = (seconds: number) => Math.round(seconds * ZIP_REPORT_FPS);
 
-const FIXED_OUTSIDE_SLIDES = INTRO_FRAMES + STATS_FRAMES + OUTRO_FRAMES; // 300 frames = 10 sec
+export const LONG_FORM_SEGMENT_FRAMES = {
+  sonicHook: toFrames(LONG_FORM_SEGMENT_SECONDS.sonicHook),
+  selfieIntro: toFrames(LONG_FORM_SEGMENT_SECONDS.selfieIntro),
+  medianSalesPrice: toFrames(LONG_FORM_SEGMENT_SECONDS.medianSalesPrice),
+  medianPricePerSqft: toFrames(LONG_FORM_SEGMENT_SECONDS.medianPricePerSqft),
+  dollarBuys: toFrames(LONG_FORM_SEGMENT_SECONDS.dollarBuys),
+  activeListings: toFrames(LONG_FORM_SEGMENT_SECONDS.activeListings),
+  daysOnMarket: toFrames(LONG_FORM_SEGMENT_SECONDS.daysOnMarket),
+  notableSales: toFrames(LONG_FORM_SEGMENT_SECONDS.notableSales),
+  localMoment: toFrames(LONG_FORM_SEGMENT_SECONDS.localMoment),
+  priceReductions: toFrames(LONG_FORM_SEGMENT_SECONDS.priceReductions),
+  listVsSold: toFrames(LONG_FORM_SEGMENT_SECONDS.listVsSold),
+  cta: toFrames(LONG_FORM_SEGMENT_SECONDS.cta),
+} as const;
 
-export function getSlidesSectionFrames(slideCount: number): number {
-  // 150 sec × 30fps = 4500 total frames
-  // 4500 - 300 fixed = 4200 frames for slides section
-  const minTotalFrames   = ZIP_REPORT_FPS * ZIP_MARKET_MIN_DURATION_SECONDS;
-  const minSlidesSection = Math.max(0, minTotalFrames - FIXED_OUTSIDE_SLIDES);
-
-  if (slideCount === 0) {
-    return Math.max(60, minSlidesSection);
-  }
-
-  // Stretch slides to fill 2.5 min minimum
-  // e.g. 9 slides → 4200 ÷ 9 = ~467 frames per slide (~15 sec each)
-  return Math.max(slideCount * SLIDE_BASE_FRAMES, minSlidesSection);
+export function getZipMarketReportDurationInFrames(): number {
+  return Object.values(LONG_FORM_SEGMENT_FRAMES).reduce((acc, frames) => acc + frames, 0);
 }
 
-export function getZipMarketReportDurationInFrames(slideCount: number): number {
-  return FIXED_OUTSIDE_SLIDES + getSlidesSectionFrames(slideCount);
+export function getShortsDurationInFrames(): number {
+  return toFrames(SHORTS_DURATION_SECONDS);
 }
 
-export function getFramesPerSlide(
-  slideCount: number,
-  slidesSectionFrames: number
-): number {
-  return slidesSectionFrames / Math.max(slideCount, 1);
+export type ChartSegmentKey =
+  | "medianSalesPrice"
+  | "medianPricePerSqft"
+  | "activeListings"
+  | "daysOnMarket"
+  | "priceReductions"
+  | "listVsSold";
+
+export const CHART_SEGMENT_SEQUENCE: ChartSegmentKey[] = [
+  "medianSalesPrice",
+  "medianPricePerSqft",
+  "activeListings",
+  "daysOnMarket",
+  "priceReductions",
+  "listVsSold",
+];
+
+export function getChartSegmentDurationInFrames(segment: ChartSegmentKey): number {
+  return LONG_FORM_SEGMENT_FRAMES[segment];
 }
